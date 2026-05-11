@@ -260,7 +260,12 @@ Leitura espiritual em 3 cartas
 
 <br>
 
-<input type="date" id="nascimento">
+<input 
+type="text" 
+id="nascimento" 
+placeholder="Data de nascimento (DD/MM/AAAA)"
+maxlength="10"
+oninput="formatarData(this)">
 
 <br>
 
@@ -400,6 +405,21 @@ const leiturasProfundas = {
 
 };
 
+function formatarData(campo){
+
+    let valor = campo.value.replace(/\D/g,'');
+
+    if(valor.length > 2){
+        valor = valor.replace(/^(\d{2})(\d)/,'$1/$2');
+    }
+
+    if(valor.length > 5){
+        valor = valor.replace(/^(\d{2})\/(\d{2})(\d)/,'$1/$2/$3');
+    }
+
+    campo.value = valor;
+}
+
 function fazerLeitura(){
 
     const nome = document.getElementById("nome").value;
@@ -431,7 +451,7 @@ function fazerLeitura(){
         hoje.getDate() +
         hoje.getMonth() +
         hoje.getFullYear() +
-        new Date(nascimento).getDate();
+        parseInt(nascimento.substring(0,2)) || 1;
 
         let html = "";
 
