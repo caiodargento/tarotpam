@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Caio D’Argento</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    background:#050505;
+    color:white;
+    font-family:Georgia, serif;
+    text-align:center;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:
+    radial-gradient(circle at top, rgba(255,215,0,0.08), transparent 40%),
+    radial-gradient(circle at bottom, rgba(255,255,255,0.03), transparent 30%);
+    z-index:-1;
+}
+
+.container{
+    padding:30px;
+}
+
+h1{
+    color:#d4af37;
+    font-size:42px;
+    margin-bottom:10px;
+    letter-spacing:2px;
+}
+
+.sub{
+    color:#999;
+    margin-bottom:30px;
+}
+
+input{
+    width:90%;
+    max-width:320px;
+    padding:14px;
+    margin:10px;
+    border:none;
+    border-radius:12px;
+    background:#1b1b1b;
+    color:white;
+    font-size:16px;
+    outline:none;
+}
+
+button{
+    margin-top:15px;
+    padding:15px 30px;
+    border:none;
+    border-radius:12px;
+    background:#d4af37;
+    color:black;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+#cartas{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:30px;
+    margin-top:50px;
+}
+
+.carta{
+    width:260px;
+    background:#111;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 0 25px rgba(212,175,55,0.15);
+    animation:fade 1s ease;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.carta:hover{
+    transform:translateY(-8px) scale(1.02);
+    box-shadow:0 0 35px rgba(212,175,55,0.35);
+}
+
+.carta img{
+    width:100%;
+    border-radius:15px;
+    margin-bottom:15px;
+}
+
+.carta h2{
+    color:#d4af37;
+    margin-bottom:10px;
+}
+
+.carta h3{
+    color:#aaa;
+    font-size:16px;
+    margin-bottom:15px;
+}
+
+.carta p{
+    color:#ddd;
+    line-height:1.5;
+    font-size:15px;
+}
+
+.footer{
+    margin-top:50px;
+    color:#666;
+    font-size:14px;
+}
+
+/* LOADING */
+
+#loading{
+    text-align:center;
+    margin-top:40px;
+}
+
+.shuffle{
+    width:120px;
+    height:180px;
+    margin:auto;
+    border-radius:15px;
+    border:2px solid #d4af37;
+    background:url('img/cards/0603150907669_12_dde7d3947d8cc0b8e10f97cdd2ebdedd.jpg');
+    background-size:cover;
+    animation:embaralhar 0.4s infinite alternate;
+    box-shadow:0 0 30px rgba(212,175,55,0.5);
+}
+
+.textoLoading{
+    margin-top:20px;
+    color:#d4af37;
+    font-size:22px;
+    letter-spacing:2px;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.92);
+    overflow:auto;
+}
+
+.modalConteudo{
+    background:#111;
+    margin:40px auto;
+    padding:30px;
+    width:90%;
+    max-width:700px;
+    border-radius:25px;
+    box-shadow:0 0 40px rgba(212,175,55,0.25);
+    animation:fade 0.5s ease;
+}
+
+.modalConteudo img{
+    width:260px;
+    max-width:100%;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.modalConteudo h2{
+    color:#d4af37;
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+.modalConteudo h3{
+    color:#aaa;
+    margin-bottom:20px;
+}
+
+.modalConteudo p{
+    color:#ddd;
+    line-height:1.8;
+    font-size:18px;
+}
+
+.fechar{
+    float:right;
+    background:#d4af37;
+    color:black;
+    border:none;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    font-size:26px;
+    cursor:pointer;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes embaralhar{
+
+    from{
+        transform:
+        rotate(-6deg)
+        translateX(-10px);
+    }
+
+    to{
+        transform:
+        rotate(6deg)
+        translateX(10px);
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Caio D’Argento</h1>
+
+<div class="sub">
+Leitura espiritual em 3 cartas
+</div>
+
+<input type="text" id="nome" placeholder="Seu nome">
+
+<br>
+
+<input type="date" id="nascimento">
+
+<br>
+
+<button onclick="fazerLeitura()">
+Fazer leitura
+</button>
+
+<div id="cartas"></div>
+
+<div id="loading" style="display:none;">
+
+    <div class="shuffle"></div>
+
+    <div class="textoLoading">
+        Embaralhando as cartas...
+    </div>
+
+</div>
+
+<audio id="somCarta" src="freesound_crunchpixstudio-appear-magic-384915.mp3"></audio>
+
+<div class="footer">
+Leituras Arcanas • Rider-Waite 1910
+</div>
+
+</div>
+
+<!-- MODAL -->
+
+<div id="modalCarta" class="modal">
+
+    <div class="modalConteudo">
+
+        <button class="fechar" onclick="fecharCarta()">
+            ×
+        </button>
+
+        <img id="modalImg">
+
+        <h2 id="modalTitulo"></h2>
+
+        <h3 id="modalResumo"></h3>
+
+        <p id="modalTexto"></p>
+
+    </div>
+
+</div>
+
+<script>
+
+const arquivos = [
+"0603150907669_00_6cf5c9e139a36cb06a5cdd5a7505afde.jpg",
+"0603150907669_02_481628b008f6379a765139553c4db783.jpg",
+"0603150907669_03_2cf480c9bfd704f816b73911a620f44c.jpg",
+"0603150907669_04_ac3e5a25130cf5ce712502e48c094ef1.jpg",
+"0603150907669_05_81571019272e8c25f754e42702e52765.jpg",
+"0603150907669_06_0396dfed9a85453ec33d5e70bcb07737.jpg",
+"0603150907669_07_f03aa13e7405ee7a90c07e85917c3d68.jpg",
+"0603150907669_08_d99ac829d630a9583491cb72de8d85e9.jpg",
+"0603150907669_09_ad0d3139093e276d30d2ecbf032f5230.jpg",
+"0603150907669_10_647c259f0e8f970844cca76802007a06.jpg",
+"0603150907669_11_b555ff4834aa8302ca12ce37f0f2a942.jpg",
+"0603150907669_12_dde7d3947d8cc0b8e10f97cdd2ebdedd.jpg",
+"0603150907669_13_373990dc7703fd8e2007064a4e476788.jpg",
+"0603150907669_14_f059d2452469555b041c6d88f211d054.jpg",
+"0603150907669_15_faf93626b613cdf6fd45f183ac493007.jpg",
+"0603150907669_16_69cc9a4f46a918f3f65983b32b1ebf20.jpg",
+"0603150907669_17_0f21a5cd7b2b3034e58ebb7a0cd98008.jpg",
+"0603150907669_18_37e9377240ed5416b7b124fb123f54cb.jpg",
+"0603150907669_19_8e27e2dd144957196469a3c423fe1fb4.jpg",
+"0603150907669_20_7012cbdb9b5466885931e39832ae6c5e.jpg",
+"0603150907669_21_6d4976f94d29d6ba0d30d4992eb50ba1.jpg",
+"0603150907669_22_cd146c178e0f7eb196a3d6a43d719d09.jpg"
+];
+
+const nomes = [
+"O Louco",
+"O Mago",
+"A Sacerdotisa",
+"A Imperatriz",
+"O Imperador",
+"O Hierofante",
+"Os Enamorados",
+"O Carro",
+"A Força",
+"O Eremita",
+"A Roda da Fortuna",
+"A Justiça",
+"O Enforcado",
+"A Morte",
+"A Temperança",
+"O Diabo",
+"A Torre",
+"A Estrela",
+"A Lua",
+"O Sol",
+"O Julgamento",
+"O Mundo"
+];
+
+const significados = [
+"Novos começos, liberdade e aventura.",
+"Poder pessoal, iniciativa e criação.",
+"Intuição, mistério e sabedoria interior.",
+"Abundância, feminilidade e criatividade.",
+"Autoridade, estrutura e liderança.",
+"Espiritualidade, tradição e ensinamentos.",
+"Escolhas amorosas e caminhos importantes.",
+"Movimento, vitória e direção.",
+"Coragem, domínio emocional e força interior.",
+"Reflexão, solitude e sabedoria.",
+"Mudanças de ciclo e destino.",
+"Equilíbrio, verdade e consequências.",
+"Nova perspectiva, pausa e sacrifício.",
+"Transformação profunda e renascimento.",
+"Harmonia, paciência e equilíbrio emocional.",
+"Tentações, vícios e desejos materiais.",
+"Rupturas, choque e libertação.",
+"Esperança, cura e inspiração.",
+"Ilusões, emoções e mistérios.",
+"Clareza, felicidade e sucesso.",
+"Despertar, chamado espiritual e renovação.",
+"Conclusão, realização e plenitude."
+];
+
+const leiturasProfundas = {
+
+"Os Enamorados":
+"O dia de hoje revela que escolhas ou pessoas que você já se relacionou tendem a voltar novamente em sua vida. Você pode aceitar ou devolver para o universo. Atenção aos sinais do seu dia.",
+
+"A Morte":
+"Sua vida pode estar estagnada nesse dia ou semana, porém a espiritualidade vem te falar que esse ciclo está chegando ao fim. Coisas novas, situações de emprego e contratos serão renovados para melhor.",
+
+"O Julgamento":
+"Sua área espiritual está te convocando a ter um relacionamento mais íntimo com o eterno. Abra seu coração para parte espiritual e verá coisas maravilhosas acontecerem."
+
+};
+
+function fazerLeitura(){
+
+    const nome = document.getElementById("nome").value;
+    const nascimento = document.getElementById("nascimento").value;
+
+    if(nome === "" || nascimento === ""){
+        alert("Preencha os campos.");
+        return;
+    }
+
+    document.getElementById("cartas").innerHTML = "";
+
+    document.getElementById("loading").style.display = "block";
+
+    const audio = document.getElementById("somCarta");
+
+    audio.currentTime = 0;
+
+    audio.play();
+
+    setTimeout(() => {
+
+        document.getElementById("loading").style.display = "none";
+
+        const hoje = new Date();
+
+        const seed =
+        nome.length +
+        hoje.getDate() +
+        hoje.getMonth() +
+        hoje.getFullYear() +
+        new Date(nascimento).getDate();
+
+        let html = "";
+
+        for(let i=0;i<3;i++){
+
+            const numero = (seed + i * 7) % nomes.length;
+
+            const titulo =
+            i === 0 ? "Energia Atual" :
+            i === 1 ? "Desafio" :
+            "Conselho";
+
+            html += `
+
+            <div class="carta"
+            onclick="abrirCarta(
+            '${arquivos[numero]}',
+            '${nomes[numero]}',
+            '${significados[numero]}',
+            '${leiturasProfundas[nomes[numero]] || "Grandes energias espirituais cercam essa carta hoje."}'
+            )">
+
+                <h3>${titulo}</h3>
+
+                <img src="img/cards/${arquivos[numero]}">
+
+                <h2>${nomes[numero]}</h2>
+
+                <p>${significados[numero]}</p>
+
+            </div>
+
+            `;
+        }
+
+        document.getElementById("cartas").innerHTML = html;
+
+    }, 4000);
+}
+
+function abrirCarta(imagem, titulo, resumo, texto){
+
+    document.getElementById("modalCarta").style.display = "block";
+
+    document.getElementById("modalImg").src =
+    "img/cards/" + imagem;
+
+    document.getElementById("modalTitulo").innerText =
+    titulo;
+
+    document.getElementById("modalResumo").innerText =
+    resumo;
+
+    document.getElementById("modalTexto").innerText =
+    texto;
+}
+
+function fecharCarta(){
+
+    document.getElementById("modalCarta").style.display =
+    "none";
+}
+
+</script>
+
+</body>
+</html>
