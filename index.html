@@ -273,6 +273,25 @@ oninput="formatarData(this)">
 Fazer leitura
 </button>
 
+<br>
+
+<button onclick="fazerNumerologia()">
+    Numerologia
+</button>
+
+<div id="numerologia" style="
+margin-top:40px;
+display:none;
+background:#111;
+padding:25px;
+border-radius:20px;
+max-width:800px;
+margin-left:auto;
+margin-right:auto;
+box-shadow:0 0 25px rgba(212,175,55,0.15);
+">
+</div>
+
 <div id="cartas"></div>
 
 <div id="loading" style="display:none;">
@@ -513,6 +532,190 @@ function fecharCarta(){
 
     document.getElementById("modalCarta").style.display =
     "none";
+}
+
+function reduzirNumero(numero){
+
+    while(numero > 9 &&
+          numero !== 11 &&
+          numero !== 22 &&
+          numero !== 33){
+
+        numero = numero
+        .toString()
+        .split('')
+        .reduce((a,b)=>a+parseInt(b),0);
+    }
+
+    return numero;
+}
+
+function calcularCaminhoVida(data){
+
+    let numeros =
+    data.replace(/\D/g,'');
+
+    let soma = 0;
+
+    for(let n of numeros){
+        soma += parseInt(n);
+    }
+
+    return reduzirNumero(soma);
+}
+
+function calcularExpressao(nome){
+
+    const tabela = {
+        A:1,J:1,S:1,
+        B:2,K:2,T:2,
+        C:3,L:3,U:3,
+        D:4,M:4,V:4,
+        E:5,N:5,W:5,
+        F:6,O:6,X:6,
+        G:7,P:7,Y:7,
+        H:8,Q:8,Z:8,
+        I:9,R:9
+    };
+
+    let soma = 0;
+
+    nome = nome.toUpperCase();
+
+    for(let letra of nome){
+
+        if(tabela[letra]){
+            soma += tabela[letra];
+        }
+    }
+
+    return reduzirNumero(soma);
+}
+
+function calcularAlma(nome){
+
+    const valores = {
+        A:1,E:5,I:9,O:6,U:3
+    };
+
+    let soma = 0;
+
+    nome = nome.toUpperCase();
+
+    for(let letra of nome){
+
+        if(valores[letra]){
+            soma += valores[letra];
+        }
+    }
+
+    return reduzirNumero(soma);
+}
+
+function interpretarNumero(numero){
+
+    const textos = {
+
+        1:"Liderança, independência e iniciativa.",
+
+        2:"Cooperação, diplomacia e sensibilidade.",
+
+        3:"Comunicação, criatividade e expressão.",
+
+        4:"Trabalho, disciplina e construção.",
+
+        5:"Mudanças, liberdade e movimento.",
+
+        6:"Responsabilidade, família e harmonia.",
+
+        7:"Espiritualidade, estudo e introspecção.",
+
+        8:"Poder material, gestão e prosperidade.",
+
+        9:"Sabedoria, compaixão e encerramentos.",
+
+        11:"Número mestre da intuição e inspiração.",
+
+        22:"Número mestre da construção e realização.",
+
+        33:"Número mestre do serviço e amor universal."
+    };
+
+    return textos[numero] ||
+    "Energia especial em desenvolvimento.";
+}
+
+function fazerNumerologia(){
+
+    const nome =
+    document.getElementById("nome").value;
+
+    const nascimento =
+    document.getElementById("nascimento").value;
+
+    if(nome === "" || nascimento === ""){
+
+        alert("Preencha nome e data.");
+        return;
+    }
+
+    const caminho =
+    calcularCaminhoVida(nascimento);
+
+    const expressao =
+    calcularExpressao(nome);
+
+    const alma =
+    calcularAlma(nome);
+
+    document.getElementById("numerologia").style.display =
+    "block";
+
+    document.getElementById("numerologia").innerHTML = `
+
+        <h2 style="color:#d4af37;">
+            Numerologia Pessoal
+        </h2>
+
+        <h3>
+            Caminho de Vida: ${caminho}
+        </h3>
+
+        <p>
+            ${interpretarNumero(caminho)}
+        </p>
+
+        <hr>
+
+        <h3>
+            Número da Expressão: ${expressao}
+        </h3>
+
+        <p>
+            ${interpretarNumero(expressao)}
+        </p>
+
+        <hr>
+
+        <h3>
+            Número da Alma: ${alma}
+        </h3>
+
+        <p>
+            ${interpretarNumero(alma)}
+        </p>
+
+        <hr>
+
+        <p style="
+        color:#d4af37;
+        font-size:18px;
+        line-height:1.7;
+        ">
+        Sua leitura numerológica mostra tendências ligadas ao seu nome e à sua data de nascimento. A interpretação busca destacar potenciais, desafios e características que podem estar mais evidentes neste momento da sua jornada.
+        </p>
+
+    `;
 }
 
 </script>
